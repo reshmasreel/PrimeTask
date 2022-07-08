@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PrimeTask</title>
+
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.css" />
+
+  </head>
+  <body>
+    <h1>Welcome to Firebase authentication Application</h1>
+
+    <div id = "login">
+      <button id = "login-google">Login with Google</button>
+    </div>
+
+    <div id = "dashboard">
+      <div id = "userDetails">
+
+      </div>
+      <button id = "logout-google">Logout</button>
+    </div>
+
+    <!-- <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script> -->
+
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.4/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.8.4/firebase-analytics.js";
+      import { getAuth } from "https://www.gstatic.com/firebasejs/9.8.4/firebase-auth.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+    
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyBul6fze12zMcGmn-UBPRHPyFyYZ-iB22U",
+        authDomain: "primetask-4bd5c.firebaseapp.com",
+        projectId: "primetask-4bd5c",
+        storageBucket: "primetask-4bd5c.appspot.com",
+        messagingSenderId: "80091510147",
+        appId: "1:80091510147:web:c85431d4410c062a2d32b6",
+        measurementId: "G-69P685JJSK"
+      };
+    
+      firebase.initializeApp(firebaseConfig);
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+      const auth = getAuth(app);
+
+      document.getElementById('dashboard').style.display="none"
+
+      document.getElementById('login-google').addEventListener('click', login_google);
+      document.getElementById('logout-google').addEventListener('click', logout_google);
+
+      let provider = new firebase.auth.GoogleAuthProvider()
+
+      function login_google(){
+        console.log('Login Button Call')
+        firebase.auth().signInWithPopup(provider).then(res => {
+          console.log(res.user)
+          document.getElementById('login').style.display="none"
+          document.getElementById('dashboard').style.display="block"
+          showUserDetails(res.user)
+        }).catch(e => {
+          console.log(e)
+        })
+      }
+
+      function showUserDetails(user){
+        document.getElementById('userDetails').innerHTML = `
+          <img src="${user.photoURL}" style="width:10%">
+          <p>Name: ${user.displayName}</p>
+          <p>Email: ${user.email}</p>
+        `
+      }
+
+      function checkAuthState(){
+        firebase.auth().onAuthStateChanged(user=>{
+          if(user){
+            document.getElementById('login').style.display="none"
+            document.getElementById('dashboard').style.display="block"
+            showUserDetails(user)
+          }else{
+
+          }
+        })
+      }
+
+      function logout_google(){
+        console.log('Logout Button Call')
+        firebase.auth().signOut().then(()=>{
+          document.getElementById('login').style.display="block"
+          document.getElementById('dashboard').style.display="none"
+        }).catch(e=>{
+          console.log(e)
+        })
+      }
+
+      checkAuthState()
+      
+    </script>
+  </body>
+</html>
